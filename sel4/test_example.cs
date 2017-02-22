@@ -20,13 +20,29 @@ namespace Sel4
         }
 
         [Test]
-        public void FirstTest()
+        public void LoginTest()
         {
-            driver.Url = "https://wizzair.com/";
-            var a = driver.Title;
-            wait.Until(ExpectedConditions.TitleIs("Official Wizz Air website | Book direct for the cheapest prices"));
+            driver.Url = "http://localhost/litecart/admin/login.php";
+            wait.Until(ExpectedConditions.TitleIs("My Store"));
+            CorrectLogin("admin", "admin");
+
+            //TODO verifications 
+            //
+
         }
 
+        public void CorrectLogin(string user, string password)
+        {
+            var usernameInput = driver.FindElement(By.Name("username"));
+            var passwordInput = driver.FindElement(By.Name("password"));
+            var loginButton = driver.FindElement(By.Name("login"));
+
+            usernameInput.SendKeys(user);
+            passwordInput.SendKeys(password);
+            loginButton.Click();
+            wait.Until(ExpectedConditions.UrlToBe("http://localhost/litecart/admin/"));
+
+        }
         [TearDown]
         public void stop()
         {
