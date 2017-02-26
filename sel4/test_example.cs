@@ -12,9 +12,10 @@ namespace Sel4
     [TestFixture]
     public class MyFirstTest
     {
-        private string bowserToStart = "F";
+        private string bowserToStart = "FF_nightly";
         private IWebDriver driver;
         private WebDriverWait wait;
+        FirefoxOptions options = new FirefoxOptions();
 
         [SetUp]
         public void start()
@@ -25,7 +26,14 @@ namespace Sel4
                     driver = new ChromeDriver();
                     break;
                 case "F":
-                    FirefoxOptions options = new FirefoxOptions();
+                    driver = new FirefoxDriver();
+                    break;
+                case "FF_ESR":
+                    options.BrowserExecutableLocation = @"c:\Program Files\FF\ESR\firefox.exe";
+                    driver = new FirefoxDriver(options);
+                    break;
+                    break;
+                case "FF_nightly":
                     options.BrowserExecutableLocation = @"C:\Program Files (x86)\Nightly\firefox.exe";
                     driver = new FirefoxDriver(options);
                     break;
