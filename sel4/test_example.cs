@@ -26,7 +26,7 @@ namespace Sel4
                     break;
                 case "F":
                     FirefoxOptions options = new FirefoxOptions();
-                    options.BrowserExecutableLocation = @"c:\Program Files\FF\ESR\firefox.exe";
+                    options.BrowserExecutableLocation = @"C:\Program Files (x86)\Nightly\firefox.exe";
                     driver = new FirefoxDriver(options);
                     break;
                 case "IE":
