@@ -12,7 +12,7 @@ namespace Sel4
     [TestFixture]
     public class MyFirstTest
     {
-        private string bowserToStart = "C";
+        private string bowserToStart = "F";
         private IWebDriver driver;
         private WebDriverWait wait;
 
@@ -25,7 +25,9 @@ namespace Sel4
                     driver = new ChromeDriver();
                     break;
                 case "F":
-                    driver = new FirefoxDriver();
+                    FirefoxOptions options = new FirefoxOptions();
+                    options.BrowserExecutableLocation = @"c:\Program Files\FF\ESR\firefox.exe";
+                    driver = new FirefoxDriver(options);
                     break;
                 case "IE":
                     driver = new InternetExplorerDriver();
