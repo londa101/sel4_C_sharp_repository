@@ -12,7 +12,7 @@ namespace Sel4
     [TestFixture]
     public class MyFirstTest
     {
-        private string bowserToStart = "IE";
+        private string bowserToStart = "C";
         private IWebDriver driver;
         private WebDriverWait wait;
 
