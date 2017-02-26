@@ -2,23 +2,43 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
+
 
 namespace Sel4
 {
     [TestFixture]
     public class MyFirstTest
     {
+        private string bowserToStart = "IE";
         private IWebDriver driver;
         private WebDriverWait wait;
 
         [SetUp]
         public void start()
         {
-            driver = new ChromeDriver();
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            switch (bowserToStart)
+            {
+                case "C":
+                    driver = new ChromeDriver();
+                    break;
+                case "F":
+                    driver = new FirefoxDriver();
+                    break;
+                case "IE":
+                    driver = new InternetExplorerDriver();
+                    break;
+
+            }
+
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(40));
         }
 
+       
+
+      
         [Test]
         public void LoginTest()
         {
