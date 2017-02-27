@@ -43,7 +43,7 @@ namespace Sel4
 
             }
 
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(40));
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
         }
 
        
