@@ -62,31 +62,38 @@ namespace Sel4
         [Test]
         public void LeftMenuTest()
         {
+            By MainMenuLocator = By.CssSelector("ul#box-apps-menu li  a");
+            By SubMenuLocator = By.CssSelector("li[id^='doc'] a");
+
             GoToLoginPage();
             CorrectLogin("admin", "admin");
-            var mainMenuList = driver.FindElements(By.CssSelector("ul#box-apps-menu li  a")).Select(element => element.Text).ToList();
+            var mainMenuList = GetMenuLinks(MainMenuLocator);
             foreach (var item in mainMenuList)
             {
-                var currentItem = driver.FindElement(By.LinkText(item));
-                currentItem.Click();
+                SelectMenuItem(item);
                 Console.WriteLine($"-{item}");
 
-               
-                var subMenu =  driver.FindElements(By.CssSelector("li[id^='doc'] a")).Select(element => element.Text).ToList();
-                
+                var subMenu = GetMenuLinks(SubMenuLocator);
                 foreach (var subItem in subMenu)
                 {
-                    currentItem = driver.FindElement(By.LinkText(subItem));
-                    currentItem.Click();
-                    Console.WriteLine($"----{subItem}"); 
+                    SelectMenuItem(subItem);
+                    Console.WriteLine($"---{subItem}"); 
                 }
-
-
             }
-            var a = 1;
-            //TODO verifications 
-            //
+            
 
+        }
+
+
+        public List<string> GetMenuLinks(By selector)
+        {
+            return driver.FindElements(selector).Select(element => element.GetAttribute("href")).ToList();
+        }
+
+        public void SelectMenuItem(string link)
+        {
+            var currentItem = driver.FindElement(By.CssSelector($"[href='{link}']"));
+            currentItem.Click();
         }
 
         public void GoToLoginPage()
@@ -107,6 +114,8 @@ namespace Sel4
             wait.Until(ExpectedConditions.UrlToBe("http://localhost/litecart/admin/"));
 
         }
+
+
         [TearDown]
         public void stop()
         {
