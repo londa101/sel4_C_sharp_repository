@@ -12,11 +12,11 @@ using System.Linq;
 namespace Sel4
 {
     [TestFixture]
-    public class MyFirstTest
+    public class BaseTest
     {
         private string bowserToStart = "C";
-        private IWebDriver driver;
-        private WebDriverWait wait;
+        protected IWebDriver driver;
+        protected WebDriverWait wait;
         FirefoxOptions options = new FirefoxOptions();
 
         [SetUp]
@@ -47,48 +47,13 @@ namespace Sel4
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         }
       
-        [Test]
-        public void LoginTest()
-        {
-            GoToLoginPage();
-            CorrectLogin("admin", "admin");
-
-            //TODO verifications 
-            //
-
-        }
+        
 
 
-        [Test]
-        public void LeftMenuTest()
-        {
-            By MainMenuLocator = By.CssSelector("ul#box-apps-menu li a");
-            By SubMenuLocator = By.CssSelector("li[id^='doc'] a");
-            By HeaderLocator = By.CssSelector("h1");
-
-            List<string> errorMessage = new List<string>();
-
-            GoToLoginPage();
-            CorrectLogin("admin", "admin");
-            var mainMenuList = GetMenuText(MainMenuLocator);
-            {
-                foreach (var item in mainMenuList)
-                {
-                    SelectMenuItemByText(item);
-                    Assert.IsTrue(AreElementsPresent(driver, HeaderLocator), $"header for item {item} doesn't found");
-
-                    var subMenu = GetMenuText(SubMenuLocator);
-                    foreach (var subItem in subMenu)
-                    {
-                        SelectMenuItemByText(subItem);
-                        Assert.IsTrue(AreElementsPresent(driver, HeaderLocator), $"header for item {subItem} doesn't found");
-                    }
-                }
-            }
-        }
+       
 
 
-        bool AreElementsPresent(IWebDriver driver, By locator)
+        public bool AreElementsPresent(By locator)
         {
             return driver.FindElements(locator).Count > 0;
         }
@@ -116,10 +81,16 @@ namespace Sel4
             currentItem.Click();
         }
 
-        public void GoToLoginPage()
+        public void GoToLoginAdminPage()
         {
             driver.Url = "http://localhost/litecart/admin/login.php";
             wait.Until(ExpectedConditions.TitleIs("My Store"));
+        }
+
+        public void GoToShopPage()
+        {
+            driver.Url = "http://localhost/litecart/en/";
+            wait.Until(ExpectedConditions.TitleIs("Online Store | My Store"));
         }
 
         public void CorrectLogin(string user, string password)
