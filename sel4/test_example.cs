@@ -62,37 +62,57 @@ namespace Sel4
         [Test]
         public void LeftMenuTest()
         {
-            By MainMenuLocator = By.CssSelector("ul#box-apps-menu li  a");
+            By MainMenuLocator = By.CssSelector("ul#box-apps-menu li a");
             By SubMenuLocator = By.CssSelector("li[id^='doc'] a");
+            By HeaderLocator = By.CssSelector("h1");
+
+            List<string> errorMessage = new List<string>();
 
             GoToLoginPage();
             CorrectLogin("admin", "admin");
-            var mainMenuList = GetMenuLinks(MainMenuLocator);
-            foreach (var item in mainMenuList)
+            var mainMenuList = GetMenuText(MainMenuLocator);
             {
-                SelectMenuItem(item);
-                Console.WriteLine($"-{item}");
-
-                var subMenu = GetMenuLinks(SubMenuLocator);
-                foreach (var subItem in subMenu)
+                foreach (var item in mainMenuList)
                 {
-                    SelectMenuItem(subItem);
-                    Console.WriteLine($"---{subItem}"); 
+                    SelectMenuItemByText(item);
+                    Assert.IsTrue(AreElementsPresent(driver, HeaderLocator), $"header for item {item} doesn't found");
+
+                    var subMenu = GetMenuText(SubMenuLocator);
+                    foreach (var subItem in subMenu)
+                    {
+                        SelectMenuItemByText(subItem);
+                        Assert.IsTrue(AreElementsPresent(driver, HeaderLocator), $"header for item {subItem} doesn't found");
+                    }
                 }
             }
-            
-
         }
 
+
+        bool AreElementsPresent(IWebDriver driver, By locator)
+        {
+            return driver.FindElements(locator).Count > 0;
+        }
 
         public List<string> GetMenuLinks(By selector)
         {
             return driver.FindElements(selector).Select(element => element.GetAttribute("href")).ToList();
         }
-
-        public void SelectMenuItem(string link)
+        public List<string> GetMenuText(By selector)
         {
+            return driver.FindElements(selector).Select(element => element.Text).ToList();
+        }
+
+        public void SelectMenuItemByLink(string link)
+        {
+            wait.Until(ExpectedConditions.ElementExists(By.CssSelector($"[href='{link}']")));
             var currentItem = driver.FindElement(By.CssSelector($"[href='{link}']"));
+            currentItem.Click();
+        }
+
+        public void SelectMenuItemByText(string text)
+        {
+            wait.Until(ExpectedConditions.ElementExists(By.LinkText(text)));
+            var currentItem = driver.FindElement(By.LinkText(text));
             currentItem.Click();
         }
 
