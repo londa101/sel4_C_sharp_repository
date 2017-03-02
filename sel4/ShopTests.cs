@@ -16,7 +16,6 @@ namespace Sel4
         [Test]
         public void AllProductsShouldHaveStickers()
         {
-            List<string> errorMessage = new List<string>();
 
             GoToShopPage();
             var SectionList = GetSectionList();
