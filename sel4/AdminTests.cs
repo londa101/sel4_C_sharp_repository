@@ -2,7 +2,8 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System.Collections.Generic;
-
+using System;
+using System.Linq;
 
 
 namespace Sel4
@@ -17,10 +18,6 @@ namespace Sel4
         {
             GoToLoginAdminPage();
             CorrectLogin("admin", "admin");
-
-            //TODO verifications 
-            //
-
         }
 
 
@@ -53,52 +50,135 @@ namespace Sel4
         }
 
 
-        //bool AreElementsPresent(IWebDriver driver, By locator)
-        //{
-        //    return driver.FindElements(locator).Count > 0;
-        //}
 
-        //public List<string> GetMenuLinks(By selector)
-        //{
-        //    return driver.FindElements(selector).Select(element => element.GetAttribute("href")).ToList();
-        //}
-        //public List<string> GetMenuText(By selector)
-        //{
-        //    return driver.FindElements(selector).Select(element => element.Text).ToList();
-        //}
+        [Test]
+        public void CountriesShouldBeSorted()
+        {
+            GoToLoginAdminPage();
+            CorrectLogin("admin", "admin");
+            SelectMenuItemByText("Countries");
+            var Countries = GetCountriesList();
+            Assert.That(Countries, Is.Ordered);
+        }
 
-        //public void SelectMenuItemByLink(string link)
-        //{
-        //    wait.Until(ExpectedConditions.ElementExists(By.CssSelector($"[href='{link}']")));
-        //    var currentItem = driver.FindElement(By.CssSelector($"[href='{link}']"));
-        //    currentItem.Click();
-        //}
+         [Test]
+        public void CountriesZonesShouldBeSorted()
+        {
 
-        //public void SelectMenuItemByText(string text)
-        //{
-        //    wait.Until(ExpectedConditions.ElementExists(By.LinkText(text)));
-        //    var currentItem = driver.FindElement(By.LinkText(text));
-        //    currentItem.Click();
-        //}
+            GoToLoginAdminPage();
+            CorrectLogin("admin", "admin");
+            SelectMenuItemByText("Countries");
+            var Countries = GetCountriesList();
 
-        //public void GoToLoginPage()
-        //{
-        //    driver.Url = "http://localhost/litecart/admin/login.php";
-        //    wait.Until(ExpectedConditions.TitleIs("My Store"));
-        //}
+            for (var i=1; i<= Countries.Count; i++)
+            {
+                if (GetZoneCount(i) != "0")
+                {
+                    OpenCountry(Countries[i]);
+                    var ZoneList = GetZoneList();
+                    ReturnToCountriesList();
+                    Assert.That(ZoneList, Is.Ordered);
+                }
+            } 
+        }
 
-        //public void CorrectLogin(string user, string password)
-        //{
-        //    var usernameInput = driver.FindElement(By.Name("username"));
-        //    var passwordInput = driver.FindElement(By.Name("password"));
-        //    var loginButton = driver.FindElement(By.Name("login"));
+        private void ReturnToCountriesList()
+        {
+            By ButtonSelector = By.CssSelector("button[name=cancel]");
+            var buttonCancel = driver.FindElement(ButtonSelector);
+            buttonCancel.Click();
 
-        //    usernameInput.SendKeys(user);
-        //    passwordInput.SendKeys(password);
-        //    loginButton.Click();
-        //    wait.Until(ExpectedConditions.UrlToBe("http://localhost/litecart/admin/"));
+        }
 
-        //}
+        private List<string> GetZoneList()
+        {
+            List<string> result = new List<string>();
+            result = GetColumnValues("Name");
+            result.Remove(""); //delete las element
+            return result;
+        }
+   
 
+        private void OpenCountry(string country)
+        {
+            var locator = By.XPath($"//a[.='{country}']");
+            var countryLink = driver.FindElement(locator);
+            countryLink.Click();
+        }
+
+        private void OpenCountry(int index)
+        {
+            By TableSelector = By.CssSelector("table.dataTable");
+
+            var locator = By.CssSelector($"tr:nth-child({index}) td:nth-child({GetColumnIndex(TableSelector, "Names")}) a");
+            var countryLink = driver.FindElement(locator);
+            countryLink.Click();
+        }
+
+        private string GetZoneCount(string country)
+        {
+            By TableSelector = By.CssSelector("table.dataTable");
+
+            var locator = By.XPath($"//td[.='{country}']/../td[{GetColumnIndex(TableSelector, "Zones")}]");
+            var zoneElemenent = driver.FindElement(locator);
+            return zoneElemenent.Text;
+        }
+
+        private string GetZoneCount(int index)
+        {
+            By TableSelector = By.CssSelector("table.dataTable");
+            var ZoneSelector = By.CssSelector($"tr:nth-child({index}) td:nth-child({GetColumnIndex(TableSelector, "Zones")})");
+            var zoneElemenent = driver.FindElement(ZoneSelector);
+            return zoneElemenent.Text;
+        }
+
+
+        private bool HasAlphabetOrder(List<string> list)
+        {
+            bool isOrderCorrect = true;
+            int i = 0;
+            while ((i < list.Count-1) && isOrderCorrect)
+            {
+                if (String.Compare(list[i], list[i + 1]) >= 0)
+                {
+                    isOrderCorrect = false;
+                }
+                i++; 
+            }
+            return isOrderCorrect;
+        }
+
+        private List<string> GetCountriesList()
+        {
+            List<string> result = new List<string>();
+            result = GetColumnValues("Name");
+
+            return result;
+        }
+
+        private List<string> GetColumnValues(string columnName)
+        {
+            List<string> result = new List<string>();
+            By TableSelector = By.CssSelector("table.dataTable");
+            var table = driver.FindElement(TableSelector);
+
+            var i = GetColumnIndex(TableSelector, columnName);
+            By ColumnSelector = By.CssSelector($" td:nth-child({i})");
+            result = table.FindElements(ColumnSelector).Select(element => element.Text).ToList();
+            return result;
+        }
+
+        private int GetColumnIndex(By TableSelector, string columnName)
+        {
+            var headers = GetColumnNames(TableSelector);
+            var i = headers.IndexOf(columnName) + 1;
+            return i;
+        }
+        private List<string> GetColumnNames(By TableSelector)
+        {
+            var table = driver.FindElement(TableSelector);
+            var headerList = table.FindElements(By.CssSelector("th")).Select(element => element.Text).ToList();
+            return headerList;
+        }
     }
 }

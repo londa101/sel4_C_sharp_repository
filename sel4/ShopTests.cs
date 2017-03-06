@@ -8,7 +8,7 @@ using System;
 namespace Sel4
 {
     [TestFixture]
-    public class ShopTests :BaseTest
+    public class ShopTests:BaseTest
     {
         
 
