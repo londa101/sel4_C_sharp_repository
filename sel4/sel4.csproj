@@ -64,6 +64,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
+    <Compile Include="Duck.cs" />
     <Compile Include="ShopTests.cs" />
     <Compile Include="AdminTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
