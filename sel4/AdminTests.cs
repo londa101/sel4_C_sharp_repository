@@ -66,17 +66,19 @@ namespace Sel4
             CorrectLogin("admin", "admin");
             SelectMenuItemByText("Countries");
             var Countries = GetCountriesList();
-
-            for (var i=1; i<= Countries.Count; i++)
+            Assert.Multiple(() =>
             {
-                if (GetZoneCount(i) != "0")
+                for (var i = 1; i <= Countries.Count; i++)
                 {
-                    OpenCountry(Countries[i]);
-                    var ZoneList = GetZoneList();
-                    ReturnToCountriesList();
-                    Assert.That(ZoneList, Is.Ordered);
+                    if (GetZoneCount(i) != "0")
+                    {
+                        OpenCountry(Countries[i]);
+                        var ZoneList = GetZoneList();
+                        ReturnToCountriesList();
+                        Assert.That(ZoneList, Is.Ordered);
+                    }
                 }
-            } 
+            });
         }
 
         [Test]
@@ -87,19 +89,22 @@ namespace Sel4
             CorrectLogin("admin", "admin");
             SelectMenuItemByText("Geo Zones");
             var Countries = GetCountriesList();
-
-            for (var i = 0; i < Countries.Count; i++)
+            Assert.Multiple(() =>
             {
-                 OpenCountry(Countries[i]);
-                 var GeoZoneCounryList = GetGeoZoneCountryList();
-                var GeoZoneList = GetGeoZoneList();
-                ReturnToCountriesList();
-                Assert.That(GeoZoneCounryList, Is.Ordered);
-                Assert.That(GeoZoneList, Is.Ordered);
-            }
+                for (var i = 0; i < Countries.Count; i++)
+                {
+                    OpenCountry(Countries[i]);
+                    var GeoZoneCounryList = GetGeoZoneCountryList();
+                    var GeoZoneList = GetGeoZoneList();
+                    ReturnToCountriesList();
+                    Assert.That(GeoZoneCounryList, Is.Ordered);
+                    Assert.That(GeoZoneList, Is.Ordered);
+                }
+            });
+            
         }
 
-        private object GetGeoZoneList()
+        private List<string> GetGeoZoneList()
         {
             List<string> result = new List<string>();
             By TableSelector = By.CssSelector("table.dataTable");
