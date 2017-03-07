@@ -20,7 +20,6 @@ namespace Sel4
             CorrectLogin("admin", "admin");
         }
 
-
         [Test]
         public void LeftMenuTest()
         {
@@ -49,8 +48,6 @@ namespace Sel4
             }
         }
 
-
-
         [Test]
         public void CountriesShouldBeSorted()
         {
@@ -61,7 +58,7 @@ namespace Sel4
             Assert.That(Countries, Is.Ordered);
         }
 
-         [Test]
+        [Test]
         public void CountriesZonesShouldBeSorted()
         {
 
@@ -82,6 +79,39 @@ namespace Sel4
             } 
         }
 
+        [Test]
+        public void GeoZonesShouldBeSorted()
+        {
+
+            GoToLoginAdminPage();
+            CorrectLogin("admin", "admin");
+            SelectMenuItemByText("Geo Zones");
+            var Countries = GetCountriesList();
+
+            for (var i = 0; i < Countries.Count; i++)
+            {
+                 OpenCountry(Countries[i]);
+                 var GeoZoneCounryList = GetGeoZoneCountryList();
+                var GeoZoneList = GetGeoZoneList();
+                ReturnToCountriesList();
+                Assert.That(GeoZoneCounryList, Is.Ordered);
+                Assert.That(GeoZoneList, Is.Ordered);
+            }
+        }
+
+        private object GetGeoZoneList()
+        {
+            List<string> result = new List<string>();
+            By TableSelector = By.CssSelector("table.dataTable");
+            var table = driver.FindElement(TableSelector);
+
+            var i = GetColumnIndex(TableSelector, "Zones");
+
+            By ColumnSelector = By.CssSelector($"td:nth-child({i}) select > option[selected]");
+            result = driver.FindElements(ColumnSelector).Select(element => element.Text).ToList();
+            return result;
+        }
+
         private void ReturnToCountriesList()
         {
             By ButtonSelector = By.CssSelector("button[name=cancel]");
@@ -97,7 +127,19 @@ namespace Sel4
             result.Remove(""); //delete las element
             return result;
         }
-   
+
+        private List<string> GetGeoZoneCountryList()
+        {
+            List<string> result = new List<string>();
+            By TableSelector = By.CssSelector("table.dataTable");
+            var table = driver.FindElement(TableSelector);
+
+            var i = GetColumnIndex(TableSelector, "Country");
+
+            By ColumnSelector = By.CssSelector($"td:nth-child({i}) select > option[selected]");
+            result =driver.FindElements(ColumnSelector).Select(element => element.Text).ToList();
+            return result;
+        }
 
         private void OpenCountry(string country)
         {
@@ -131,7 +173,6 @@ namespace Sel4
             var zoneElemenent = driver.FindElement(ZoneSelector);
             return zoneElemenent.Text;
         }
-
 
         private bool HasAlphabetOrder(List<string> list)
         {
@@ -174,6 +215,7 @@ namespace Sel4
             var i = headers.IndexOf(columnName) + 1;
             return i;
         }
+
         private List<string> GetColumnNames(By TableSelector)
         {
             var table = driver.FindElement(TableSelector);
