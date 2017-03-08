@@ -35,8 +35,8 @@ namespace Sel4
         {
 
             GoToShopPage();
-            var duckInfoFromMainPage = GetInfoFromMainPage("Campaign", 1);
-            SelectProduct("Campaign", 1);
+            var duckInfoFromMainPage = GetInfoFromMainPage("Campaigns", 1);
+            SelectProduct("Campaigns", 1);
             var duckInfoFromDetails = GetInfoFromDetailsPage();
 
             Assert.Multiple(() =>
@@ -58,15 +58,34 @@ namespace Sel4
             throw new NotImplementedException();
         }
 
-        private Duck GetInfoFromMainPage(string list, int index)
+        private Duck GetInfoFromMainPage(string listName, int index)
         {
+            Duck result = new Duck();
+            string box = listName.ToLower().Replace(' ', '-');
+            By productSelector = By.CssSelector($"#box-{box}  li.product");
+            IWebElement productElement = driver.FindElement(productSelector);
 
-            throw new NotImplementedException();
+            result.Name = productElement.FindElement(By.CssSelector(".name")).Text;
+            IWebElement regularPriceElement = productElement.FindElement(By.XPath(".//*[@class='price' or @class='regular-price']"));
+            result.RegularPrice = regularPriceElement.Text;
+            result.RegularPriceColor = regularPriceElement.GetCssValue("color");
+            result.RegularPriceSize = regularPriceElement.Size;
+
+            IWebElement campaignPriceElement = productElement.FindElement(By.CssSelector(".campaign-price"));
+            result.CampaignPriceColor = campaignPriceElement.GetCssValue("color");
+            result.CampaignPrice = campaignPriceElement.Text;
+            result.CampaignPriceSize = campaignPriceElement.Size;
+            return result;
+
         }
 
         private void SelectProduct(string listName, int item)
         {
-            throw new NotImplementedException();
+            string box = listName.ToLower().Replace(' ', '-');
+            By linkSelector = By.CssSelector($"#box-{box}  li.product:nth-child({item})>a.link");
+            IWebElement productLink = driver.FindElement(linkSelector);
+            productLink.Click();
+
         }
 
         private List<IWebElement> GetProductsFromSection(IWebElement section)
