@@ -1,25 +1,18 @@
-﻿using System;
-using System.Drawing;
+﻿
 
 public class Duck
 {
     public string Name;
     public string RegularPrice;
-    public string CampaignPrice;
     public string RegularPriceColor;
-    public Size RegularPriceSize;
+    public double RegularPriceSize;
+    public bool IsRegularPriceCrossed;
+    public string CampaignPrice;
     public string CampaignPriceColor;
-    public Size CampaignPriceSize;
+    public double CampaignPriceSize;
+    public bool IsCampaignPriceBold;
 
-    public Duck(string name, string regularPrice, string campaignPrice, string regularPriceAttributes, string campaignPriceAttribute)
-	{
-        Name = name;
-        RegularPrice = regularPrice;
-        CampaignPrice = campaignPrice;
-        RegularPriceColor = regularPriceAttributes;
-        CampaignPriceColor = campaignPriceAttribute;
-
-    }
+    
 
     public Duck()
     {
@@ -27,8 +20,10 @@ public class Duck
         RegularPrice = "";
         CampaignPrice = "";
         RegularPriceColor = "";
-        RegularPriceSize = new Size();
+        RegularPriceSize = 0;
         CampaignPriceColor = "";
-        CampaignPriceSize = new Size();
+        CampaignPriceSize = 0;
+        IsRegularPriceCrossed = false;
+        IsCampaignPriceBold = false;
     }
 }

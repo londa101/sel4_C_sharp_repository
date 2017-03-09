@@ -1,6 +1,7 @@
 ﻿
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -44,18 +45,42 @@ namespace Sel4
                 Assert.AreEqual(duckInfoFromMainPage.Name, duckInfoFromDetails.Name);
                 Assert.AreEqual(duckInfoFromMainPage.RegularPrice, duckInfoFromDetails.RegularPrice);
                 Assert.AreEqual(duckInfoFromMainPage.CampaignPrice, duckInfoFromDetails.CampaignPrice);
+
+                Assert.IsTrue(duckInfoFromMainPage.IsCampaignPriceBold);
+                Assert.IsTrue(duckInfoFromMainPage.IsRegularPriceCrossed);
+                Assert.LessOrEqual(duckInfoFromMainPage.RegularPriceSize, duckInfoFromMainPage.CampaignPriceSize);
+
+                Assert.IsTrue(duckInfoFromDetails.IsCampaignPriceBold);
+                Assert.IsTrue(duckInfoFromDetails.IsRegularPriceCrossed);
+                Assert.LessOrEqual(duckInfoFromDetails.RegularPriceSize, duckInfoFromDetails.CampaignPriceSize);
+
+
             });
-            /*
-               в) обычная цена серая и зачёркнутая, а акционная цена красная и жирная (это надо проверить на каждой странице независимо, при этом цвета на разных страницах могут не совпадать)
-               г) акционная цена крупнее, чем обычная (это надо проверить на каждой странице независимо)
-             */
+           
             var a = 1;
 
         }
 
         private Duck GetInfoFromDetailsPage()
         {
-            throw new NotImplementedException();
+            Duck result = new Duck();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//div[@class='information']//*[@class='price' or @class='regular-price']")));
+
+            IWebElement regularPriceElement = driver.FindElement(By.XPath("//div[@class='information']//*[@class='price' or @class='regular-price']"));
+            IWebElement campaignPriceElement = driver.FindElement(By.CssSelector(".campaign-price"));
+
+            result.Name = driver.FindElement(By.CssSelector("h1.title")).Text;
+            result.RegularPrice = regularPriceElement.Text;
+            result.RegularPriceColor = regularPriceElement.GetCssValue("color");
+            result.RegularPriceSize = Convert.ToInt32(regularPriceElement.GetCssValue("font-size").Replace("px", ""));
+            result.IsRegularPriceCrossed = regularPriceElement.TagName == "s";
+
+            result.CampaignPriceColor = campaignPriceElement.GetCssValue("color");
+            result.CampaignPrice = campaignPriceElement.Text;
+            result.CampaignPriceSize = Convert.ToInt32(campaignPriceElement.GetCssValue("font-size").Replace("px", ""));
+            result.IsCampaignPriceBold = campaignPriceElement.TagName == "strong";
+
+            return result;
         }
 
         private Duck GetInfoFromMainPage(string listName, int index)
@@ -64,17 +89,20 @@ namespace Sel4
             string box = listName.ToLower().Replace(' ', '-');
             By productSelector = By.CssSelector($"#box-{box}  li.product");
             IWebElement productElement = driver.FindElement(productSelector);
+            IWebElement regularPriceElement = productElement.FindElement(By.XPath(".//*[@class='price' or @class='regular-price']"));
+            IWebElement campaignPriceElement = productElement.FindElement(By.CssSelector(".campaign-price"));
 
             result.Name = productElement.FindElement(By.CssSelector(".name")).Text;
-            IWebElement regularPriceElement = productElement.FindElement(By.XPath(".//*[@class='price' or @class='regular-price']"));
             result.RegularPrice = regularPriceElement.Text;
             result.RegularPriceColor = regularPriceElement.GetCssValue("color");
-            result.RegularPriceSize = regularPriceElement.Size;
+            result.RegularPriceSize = Convert.ToDouble(regularPriceElement.GetCssValue("font-size").Replace("px", ""));
+            result.IsRegularPriceCrossed = regularPriceElement.TagName == "s";
 
-            IWebElement campaignPriceElement = productElement.FindElement(By.CssSelector(".campaign-price"));
             result.CampaignPriceColor = campaignPriceElement.GetCssValue("color");
             result.CampaignPrice = campaignPriceElement.Text;
-            result.CampaignPriceSize = campaignPriceElement.Size;
+            result.CampaignPriceSize = Convert.ToDouble(campaignPriceElement.GetCssValue("font-size").Replace("px", ""));
+            result.IsCampaignPriceBold = campaignPriceElement.TagName == "strong";
+
             return result;
 
         }
