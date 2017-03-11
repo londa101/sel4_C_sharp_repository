@@ -5,6 +5,7 @@ using OpenQA.Selenium.Support.UI;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using sel4.Helpers;
 
 namespace Sel4
 {
@@ -42,29 +43,38 @@ namespace Sel4
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(duckInfoFromMainPage.Name, duckInfoFromDetails.Name);
-                Assert.AreEqual(duckInfoFromMainPage.RegularPrice, duckInfoFromDetails.RegularPrice);
-                Assert.AreEqual(duckInfoFromMainPage.CampaignPrice, duckInfoFromDetails.CampaignPrice);
+                Assert.AreEqual(duckInfoFromMainPage.Name, duckInfoFromDetails.Name, $"Names are different. MainPage - '{duckInfoFromMainPage.Name}', detail page - '{duckInfoFromMainPage.Name}'");
+                Assert.AreEqual(duckInfoFromMainPage.RegularPrice, duckInfoFromDetails.RegularPrice, $"Regular prices are different. MainPage - '{duckInfoFromMainPage.RegularPrice}', detail page - '{duckInfoFromMainPage.RegularPrice}'");
+                Assert.AreEqual(duckInfoFromMainPage.CampaignPrice, duckInfoFromDetails.CampaignPrice, $"Campaign prices are different. MainPage - '{duckInfoFromMainPage.CampaignPrice}', detail page - '{duckInfoFromMainPage.CampaignPrice}'");
 
-                Assert.IsTrue(duckInfoFromMainPage.IsCampaignPriceBold);
-                Assert.IsTrue(duckInfoFromMainPage.IsRegularPriceCrossed);
-                Assert.LessOrEqual(duckInfoFromMainPage.RegularPriceSize, duckInfoFromMainPage.CampaignPriceSize);
+                Assert.IsTrue(duckInfoFromMainPage.IsCampaignPriceBold, "Campaign Price on main page should be bold");
+                Assert.IsTrue(IsCampaignPriceRed(duckInfoFromMainPage.CampaignPriceColor), $"Campaign price on main page should be red. Acual - '{duckInfoFromMainPage.CampaignPriceColor}'");
+                Assert.IsTrue(duckInfoFromMainPage.IsRegularPriceCrossed, "Regular Price on main page should be crossed");
+                Assert.IsTrue(IsRegularPriceGrey(duckInfoFromMainPage.RegularPriceColor), $"Regular price on main page should be grey. Acual - '{duckInfoFromMainPage.RegularPriceColor}'");
+                Assert.LessOrEqual(duckInfoFromMainPage.RegularPriceSize, duckInfoFromMainPage.CampaignPriceSize, $"Regular price on main page should be less than Campaign Price. Regular - '{duckInfoFromMainPage.RegularPriceSize}', Campaign - '{duckInfoFromMainPage.CampaignPriceSize}'");
 
-                Assert.IsTrue(duckInfoFromDetails.IsCampaignPriceBold);
-                Assert.IsTrue(duckInfoFromDetails.IsRegularPriceCrossed);
-                Assert.LessOrEqual(duckInfoFromDetails.RegularPriceSize, duckInfoFromDetails.CampaignPriceSize);
-
-
+                Assert.IsTrue(duckInfoFromDetails.IsCampaignPriceBold, "Campaign Price on detail page should be bold");
+                Assert.IsTrue(IsCampaignPriceRed(duckInfoFromDetails.CampaignPriceColor), $"Campaign price on detail page should be red. Acual - '{duckInfoFromDetails.CampaignPriceColor}'");
+                Assert.IsTrue(duckInfoFromDetails.IsRegularPriceCrossed, "Regular Price on detail page should be crossed");
+                Assert.IsTrue(IsRegularPriceGrey(duckInfoFromDetails.RegularPriceColor), $"Regular price on detail page should be grey. Acual - '{duckInfoFromDetails.RegularPriceColor}'");
+                Assert.LessOrEqual(duckInfoFromDetails.RegularPriceSize, duckInfoFromDetails.CampaignPriceSize, $"Regular price on detail page should be less than Campaign Price. Regular - '{duckInfoFromDetails.RegularPriceSize}', Campaign - '{duckInfoFromDetails.CampaignPriceSize}'");
             });
-           
-            var a = 1;
+        }
 
+        private bool? IsRegularPriceGrey(string color)
+        {
+            return StyleHelper.IsGrey(color);
+        }
+
+        private bool IsCampaignPriceRed(string color)
+        {
+            return StyleHelper.IsRed(color);
         }
 
         private Duck GetInfoFromDetailsPage()
         {
             Duck result = new Duck();
-            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//div[@class='information']//*[@class='price' or @class='regular-price']")));
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("h1")));
 
             IWebElement regularPriceElement = driver.FindElement(By.XPath("//div[@class='information']//*[@class='price' or @class='regular-price']"));
             IWebElement campaignPriceElement = driver.FindElement(By.CssSelector(".campaign-price"));

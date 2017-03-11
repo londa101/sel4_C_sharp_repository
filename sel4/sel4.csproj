@@ -63,14 +63,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="BaseTest.cs" />
-    <Compile Include="Duck.cs" />
-    <Compile Include="ShopTests.cs" />
-    <Compile Include="AdminTests.cs" />
+    <Compile Include="Helpers\StyleHelper.cs" />
+    <Compile Include="Tests\BaseTest.cs" />
+    <Compile Include="Entities\Duck.cs" />
+    <Compile Include="Tests\ShopTests.cs" />
+    <Compile Include="Tests\AdminTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

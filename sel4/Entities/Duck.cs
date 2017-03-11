@@ -1,5 +1,7 @@
 ﻿
 
+using System;
+
 public class Duck
 {
     public string Name;

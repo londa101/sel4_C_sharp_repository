@@ -14,7 +14,7 @@ namespace Sel4
     [TestFixture]
     public class BaseTest
     {
-        private string bowserToStart = "FF_ESR";
+        private string bowserToStart = "C";
         protected IWebDriver driver;
         protected WebDriverWait wait;
         FirefoxOptions options = new FirefoxOptions();
@@ -41,7 +41,6 @@ namespace Sel4
                 case "IE":
                     driver = new InternetExplorerDriver();
                     break;
-               
             }
 
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));

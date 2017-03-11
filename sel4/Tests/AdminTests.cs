@@ -12,7 +12,6 @@ namespace Sel4
     public class AdminTests : BaseTest
     {
        
-      
         [Test]
         public void LoginTest()
         {
@@ -177,22 +176,7 @@ namespace Sel4
             var ZoneSelector = By.CssSelector($"tr:nth-child({index}) td:nth-child({GetColumnIndex(TableSelector, "Zones")})");
             var zoneElemenent = driver.FindElement(ZoneSelector);
             return zoneElemenent.Text;
-        }
-
-        private bool HasAlphabetOrder(List<string> list)
-        {
-            bool isOrderCorrect = true;
-            int i = 0;
-            while ((i < list.Count-1) && isOrderCorrect)
-            {
-                if (String.Compare(list[i], list[i + 1]) >= 0)
-                {
-                    isOrderCorrect = false;
-                }
-                i++; 
-            }
-            return isOrderCorrect;
-        }
+        }  
 
         private List<string> GetCountriesList()
         {
