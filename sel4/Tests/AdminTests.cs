@@ -1,9 +1,11 @@
 ﻿
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+
 using System.Collections.Generic;
-using System;
 using System.Linq;
+
 
 
 namespace Sel4
@@ -101,6 +103,20 @@ namespace Sel4
                 }
             });
             
+        }
+
+
+        public void CorrectLogin(string user, string password)
+        {
+            var usernameInput = driver.FindElement(By.Name("username"));
+            var passwordInput = driver.FindElement(By.Name("password"));
+            var loginButton = driver.FindElement(By.Name("login"));
+
+            usernameInput.SendKeys(user);
+            passwordInput.SendKeys(password);
+            loginButton.Click();
+            wait.Until(ExpectedConditions.UrlToBe("http://localhost/litecart/admin/"));
+
         }
 
         private List<string> GetGeoZoneList()

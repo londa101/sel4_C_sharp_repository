@@ -13,8 +13,6 @@ namespace Sel4
     public class ShopTests:BaseTest
     {
         
-
-
         [Test]
         public void AllProductsShouldHaveStickers()
         {
@@ -61,7 +59,106 @@ namespace Sel4
             });
         }
 
-        private bool? IsRegularPriceGrey(string color)
+        [Test]
+        public void RegisterNewCustomer()
+        {
+            
+            string Tail = StringHelper.GetRandomString(4);
+            Customer userInfo = new Customer()
+            {
+                firstName = "FN_" + Tail,
+                lastName = "LN_" + Tail,
+                address1 = "address 1_" + Tail,
+                postcode = StringHelper.GetRandomNumberString(5),
+                city = "city_"+Tail,
+                country = "United States",
+                zone = "Kansas",
+                email = $"email_{Tail}@mail.com",
+                phone = $"+1{StringHelper.GetRandomNumberString(7)}",
+                password = "test",
+                confirmPassword = "test"
+            };
+
+            GoToShopPage();
+            CreateNewUser(userInfo);
+            Logout();
+            CorrectLogin(userInfo);
+            Logout();
+        }
+
+        private void CorrectLogin(Customer userInfo)
+        {
+            var usernameInput = driver.FindElement(By.Name("email"));
+            var passwordInput = driver.FindElement(By.Name("password"));
+            var loginButton = driver.FindElement(By.Name("login"));
+
+            usernameInput.SendKeys(userInfo.email);
+            passwordInput.SendKeys(userInfo.password);
+            loginButton.Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#box-account a[href$=logout]")));
+        }
+
+        private void Logout()
+        {
+            var logoutLink = driver.FindElement(By.CssSelector("#box-account a[href$=logout]"));
+            logoutLink.Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Name("login")));
+        }
+
+        private void CreateNewUser(Customer userInfo)
+        {
+            GoToUserCreationPage();
+            FillFieldsAndSave(userInfo); 
+        }
+
+        private void FillFieldsAndSave(Customer userInfo)
+        {
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("h1")));
+
+            var taxIdInput = driver.FindElement(By.Name("tax_id"));
+            var companyInput = driver.FindElement(By.Name("company"));
+            var firstNameInput = driver.FindElement(By.Name("firstname"));
+            var lastNameInput = driver.FindElement(By.Name("lastname"));
+            var address1Input = driver.FindElement(By.Name("address1"));
+            var address2Input = driver.FindElement(By.Name("address2"));
+            var postcodeInput = driver.FindElement(By.Name("postcode"));
+            var cityInput = driver.FindElement(By.Name("city"));
+            var countrySelect = new SelectElement(driver.FindElement(By.Name("country_code")));
+            var emailInput = driver.FindElement(By.Name("email"));
+            var phoneInput = driver.FindElement(By.Name("phone"));
+            var newsletterCheckbox = driver.FindElement(By.Name("newsletter"));
+            var passwordInput = driver.FindElement(By.Name("password"));
+            var confirmPasswordInput = driver.FindElement(By.Name("confirmed_password"));
+            var CreateAccountButton = driver.FindElement(By.Name("create_account"));
+
+            taxIdInput.TypeText(userInfo.taxId);
+            companyInput.TypeText(userInfo.company);
+            firstNameInput.TypeText(userInfo.firstName);
+            lastNameInput.TypeText(userInfo.lastName);
+            address1Input.TypeText(userInfo.address1);
+            address2Input.TypeText(userInfo.address2);
+            postcodeInput.TypeText(userInfo.postcode);
+            cityInput.TypeText(userInfo.city);
+            countrySelect.SelectText(userInfo.country);
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("select[name=zone_code]")));
+            var zoneSelect = new SelectElement(driver.FindElement(By.CssSelector("select[name=zone_code]")));
+
+            zoneSelect.SelectText(userInfo.zone);
+            emailInput.TypeText(userInfo.email);
+            phoneInput.TypeText(userInfo.phone);
+            newsletterCheckbox.SetCheckbox(userInfo.newsletter);
+            passwordInput.TypeText(userInfo.password);
+            confirmPasswordInput.TypeText(userInfo.confirmPassword);
+            CreateAccountButton.Click();
+        }
+
+        private void GoToUserCreationPage()
+        {
+            IWebElement newCustomerLink = driver.FindElement(By.CssSelector("form[name=login_form] a"));
+            newCustomerLink.Click();
+        }
+
+        private bool IsRegularPriceGrey(string color)
         {
             return StyleHelper.IsGrey(color);
         }

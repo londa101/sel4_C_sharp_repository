@@ -1,10 +1,12 @@
 ﻿using System;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Edge;
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,16 +43,19 @@ namespace Sel4
                 case "IE":
                     driver = new InternetExplorerDriver();
                     break;
+                case "E":
+                    driver = new EdgeDriver();
+                    break;
             }
 
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
         }
-      
+
+
+
+
+
         
-
-
-       
-
 
         public bool AreElementsPresent(By locator)
         {
@@ -92,18 +97,7 @@ namespace Sel4
             wait.Until(ExpectedConditions.TitleIs("Online Store | My Store"));
         }
 
-        public void CorrectLogin(string user, string password)
-        {
-            var usernameInput = driver.FindElement(By.Name("username"));
-            var passwordInput = driver.FindElement(By.Name("password"));
-            var loginButton = driver.FindElement(By.Name("login"));
-
-            usernameInput.SendKeys(user);
-            passwordInput.SendKeys(password);
-            loginButton.Click();
-            wait.Until(ExpectedConditions.UrlToBe("http://localhost/litecart/admin/"));
-
-        }
+       
 
 
         [TearDown]

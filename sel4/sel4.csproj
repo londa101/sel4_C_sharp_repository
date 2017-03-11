@@ -63,6 +63,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Entities\Customer.cs" />
+    <Compile Include="Helpers\ControlExtentions.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\StyleHelper.cs" />
     <Compile Include="Tests\BaseTest.cs" />
     <Compile Include="Entities\Duck.cs" />
