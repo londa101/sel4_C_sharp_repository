@@ -9,7 +9,7 @@ using OpenQA.Selenium.Edge;
 
 using System.Collections.Generic;
 using System.Linq;
-
+using sel4.Helpers;
 
 namespace Sel4
 {
@@ -20,6 +20,7 @@ namespace Sel4
         protected IWebDriver driver;
         protected WebDriverWait wait;
         FirefoxOptions options = new FirefoxOptions();
+        protected string SupportFilesPath = FileHelper.GetSupportFilesLocation();
 
         [SetUp]
         public void start()
@@ -50,12 +51,6 @@ namespace Sel4
 
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
         }
-
-
-
-
-
-        
 
         public bool AreElementsPresent(By locator)
         {
@@ -98,8 +93,6 @@ namespace Sel4
         }
 
        
-
-
         [TearDown]
         public void stop()
         {

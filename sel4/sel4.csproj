@@ -65,10 +65,13 @@
   <ItemGroup>
     <Compile Include="Entities\Customer.cs" />
     <Compile Include="Helpers\ControlExtentions.cs" />
+    <Compile Include="Helpers\DateHelper.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\StyleHelper.cs" />
     <Compile Include="Tests\BaseTest.cs" />
     <Compile Include="Entities\Duck.cs" />
+    <Compile Include="Entities\Product.cs" />
     <Compile Include="Tests\ShopTests.cs" />
     <Compile Include="Tests\AdminTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

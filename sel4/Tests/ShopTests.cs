@@ -193,7 +193,7 @@ namespace Sel4
         private Duck GetInfoFromMainPage(string listName, int index)
         {
             Duck result = new Duck();
-            string box = listName.ToLower().Replace(' ', '-');
+            string box = StringHelper.ConvertToLinkPart(listName);
             By productSelector = By.CssSelector($"#box-{box}  li.product");
             IWebElement productElement = driver.FindElement(productSelector);
             IWebElement regularPriceElement = productElement.FindElement(By.XPath(".//*[@class='price' or @class='regular-price']"));
@@ -213,6 +213,8 @@ namespace Sel4
             return result;
 
         }
+
+       
 
         private void SelectProduct(string listName, int item)
         {

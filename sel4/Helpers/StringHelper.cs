@@ -41,5 +41,10 @@ namespace sel4.Helpers
 
             return result.ToString();
         }
+
+        public static string ConvertToLinkPart(string name)
+        {
+            return name.ToLower().Replace(' ', '-');
+        }
     }
 }
