@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace Sel4
-{
+
+
     public class Product
     {
         public List<string> Category;
@@ -24,4 +24,3 @@ namespace Sel4
         public List<string> ProductGroup;
         public string ShortDescription;
     }
-}

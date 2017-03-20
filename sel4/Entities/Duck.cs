@@ -1,8 +1,4 @@
-﻿
-
-using System;
-
-public class Duck
+﻿public class Duck
 {
     public string Name;
     public string RegularPrice;

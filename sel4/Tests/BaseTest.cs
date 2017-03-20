@@ -6,10 +6,8 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Edge;
-
-using System.Collections.Generic;
-using System.Linq;
 using sel4.Helpers;
+using sel4.Pages;
 
 namespace Sel4
 {
@@ -20,7 +18,6 @@ namespace Sel4
         protected IWebDriver driver;
         protected WebDriverWait wait;
         FirefoxOptions options = new FirefoxOptions();
-        protected string SupportFilesPath = FileHelper.GetSupportFilesLocation();
 
         [SetUp]
         public void start()
@@ -52,44 +49,20 @@ namespace Sel4
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
         }
 
-        public bool AreElementsPresent(By locator)
-        {
-            return driver.FindElements(locator).Count > 0;
-        }
+       
 
-        public List<string> GetMenuLinks(By selector)
-        {
-            return driver.FindElements(selector).Select(element => element.GetAttribute("href")).ToList();
-        }
-        public List<string> GetMenuText(By selector)
-        {
-            return driver.FindElements(selector).Select(element => element.Text).ToList();
-        }
-
-        public void SelectMenuItemByLink(string link)
-        {
-            wait.Until(ExpectedConditions.ElementExists(By.CssSelector($"[href='{link}']")));
-            var currentItem = driver.FindElement(By.CssSelector($"[href='{link}']"));
-            currentItem.Click();
-        }
-
-        public void SelectMenuItemByText(string text)
-        {
-            wait.Until(ExpectedConditions.ElementExists(By.LinkText(text)));
-            var currentItem = driver.FindElement(By.LinkText(text));
-            currentItem.Click();
-        }
-
-        public void GoToLoginAdminPage()
+        public AdminLoginPage GoToLoginAdminPage(IWebDriver driver)
         {
             driver.Url = "http://localhost/litecart/admin/login.php";
             wait.Until(ExpectedConditions.TitleIs("My Store"));
+            return new AdminLoginPage(driver);
         }
 
-        public void GoToShopPage()
+        public ShopPage GoToShopPage(IWebDriver driver)
         {
             driver.Url = "http://localhost/litecart/en/";
             wait.Until(ExpectedConditions.TitleIs("Online Store | My Store"));
+            return new ShopPage(driver);
         }
 
        

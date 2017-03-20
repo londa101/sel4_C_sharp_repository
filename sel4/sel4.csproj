@@ -69,9 +69,19 @@
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\StyleHelper.cs" />
+    <Compile Include="Pages\AdminPages\AdminCatalogPage.cs" />
+    <Compile Include="Pages\AdminPages\AdminProductPage.cs" />
+    <Compile Include="Pages\AdminPages\AdminGeoZonesPage.cs" />
+    <Compile Include="Pages\AdminPages\AdminCountriesPage.cs" />
+    <Compile Include="Pages\AdminPages\AdminHomePage.cs" />
+    <Compile Include="Pages\AdminPages\AdminLoginPage.cs" />
+    <Compile Include="Pages\BasePage.cs" />
+    <Compile Include="Pages\ShopPages\CustomerPage.cs" />
+    <Compile Include="Pages\ShopPages\ProductDetailsPage.cs" />
     <Compile Include="Tests\BaseTest.cs" />
     <Compile Include="Entities\Duck.cs" />
     <Compile Include="Entities\Product.cs" />
+    <Compile Include="Pages\ShopPages\ShopPage.cs" />
     <Compile Include="Tests\ShopTests.cs" />
     <Compile Include="Tests\AdminTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -79,9 +89,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Pages\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

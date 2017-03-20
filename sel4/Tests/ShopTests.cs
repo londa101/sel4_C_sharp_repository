@@ -17,14 +17,14 @@ namespace Sel4
         public void AllProductsShouldHaveStickers()
         {
 
-            GoToShopPage();
-            var SectionList = GetSectionList();
+            var Shop = GoToShopPage(driver);
+            var SectionList = Shop.GetSectionList();
             foreach (var section in SectionList)
             {
-                var productList = GetProductsFromSection(section);
+                var productList = Shop.GetProductsFromSection(section);
                 foreach (var duck in productList)
                 {
-                    Assert.IsTrue(IsStickerExistFor(duck), $"Product '{GetProductId(duck)}' for '{GetSectionName(section)}' hasn't any sticker");
+                    Assert.IsTrue(Shop.IsStickerExistFor(duck), $"Product '{Shop.GetProductId(duck)}' for '{Shop.GetSectionName(section)}' hasn't any sticker");
                 }
             }
         
@@ -34,10 +34,10 @@ namespace Sel4
         public void ProductShouldHaveCorrectDetails()
         {
 
-            GoToShopPage();
-            var duckInfoFromMainPage = GetInfoFromMainPage("Campaigns", 1);
-            SelectProduct("Campaigns", 1);
-            var duckInfoFromDetails = GetInfoFromDetailsPage();
+            var Shop = GoToShopPage(driver);
+            var duckInfoFromMainPage = Shop.GetInfo("Campaigns", 1);
+            var Details =  Shop.SelectProduct("Campaigns", 1);
+            var duckInfoFromDetails = Details.GetInfo();
 
             Assert.Multiple(() =>
             {
@@ -79,181 +79,52 @@ namespace Sel4
                 confirmPassword = "test"
             };
 
-            GoToShopPage();
-            CreateNewUser(userInfo);
-            Logout();
-            CorrectLogin(userInfo);
-            Logout();
+            var Shop = GoToShopPage(driver);
+            Shop.CreateNewUser(userInfo);
+            Shop.Logout();
+            Shop.CorrectLogin(userInfo);
+            Shop.Logout();
         }
 
-        private void CorrectLogin(Customer userInfo)
+        [Test]
+        [Ignore("not completed")]
+        public void VerifyCart()
         {
-            var usernameInput = driver.FindElement(By.Name("email"));
-            var passwordInput = driver.FindElement(By.Name("password"));
-            var loginButton = driver.FindElement(By.Name("login"));
+            /*
+             
+            6) удалить все товары из корзины один за другим, после каждого удаления подождать, пока внизу обновится таблица
+            */
+            var Shop = GoToShopPage(driver);
+            //add products to cart
+            for (var i = 1; i <= 3; i++)
+            {
+               var detailPage=  Shop.SelectProduct("Most Popular", 1);
+                if (detailPage.IsSizeControlExist())
+                    detailPage.SelectSize("Small");
+                detailPage.AddToCart();
+                var QuantityElement = driver.FindElement(By.CssSelector(".quantity"));
+                wait.Until(ExpectedConditions.TextToBePresentInElement(QuantityElement, i.ToString()));
+                Shop = GoToShopPage(driver);
+            }
+            Shop.GoToCart();
 
-            usernameInput.SendKeys(userInfo.email);
-            passwordInput.SendKeys(userInfo.password);
-            loginButton.Click();
-            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#box-account a[href$=logout]")));
+            var a = 1;
+
         }
 
-        private void Logout()
+        private void ReturnToMainPage()
         {
-            var logoutLink = driver.FindElement(By.CssSelector("#box-account a[href$=logout]"));
-            logoutLink.Click();
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Name("login")));
+            throw new NotImplementedException();
         }
 
-        private void CreateNewUser(Customer userInfo)
-        {
-            GoToUserCreationPage();
-            FillFieldsAndSave(userInfo); 
-        }
-
-        private void FillFieldsAndSave(Customer userInfo)
-        {
-            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("h1")));
-
-            var taxIdInput = driver.FindElement(By.Name("tax_id"));
-            var companyInput = driver.FindElement(By.Name("company"));
-            var firstNameInput = driver.FindElement(By.Name("firstname"));
-            var lastNameInput = driver.FindElement(By.Name("lastname"));
-            var address1Input = driver.FindElement(By.Name("address1"));
-            var address2Input = driver.FindElement(By.Name("address2"));
-            var postcodeInput = driver.FindElement(By.Name("postcode"));
-            var cityInput = driver.FindElement(By.Name("city"));
-            var countrySelect = new SelectElement(driver.FindElement(By.Name("country_code")));
-            var emailInput = driver.FindElement(By.Name("email"));
-            var phoneInput = driver.FindElement(By.Name("phone"));
-            var newsletterCheckbox = driver.FindElement(By.Name("newsletter"));
-            var passwordInput = driver.FindElement(By.Name("password"));
-            var confirmPasswordInput = driver.FindElement(By.Name("confirmed_password"));
-            var CreateAccountButton = driver.FindElement(By.Name("create_account"));
-
-            taxIdInput.TypeText(userInfo.taxId);
-            companyInput.TypeText(userInfo.company);
-            firstNameInput.TypeText(userInfo.firstName);
-            lastNameInput.TypeText(userInfo.lastName);
-            address1Input.TypeText(userInfo.address1);
-            address2Input.TypeText(userInfo.address2);
-            postcodeInput.TypeText(userInfo.postcode);
-            cityInput.TypeText(userInfo.city);
-            countrySelect.SelectText(userInfo.country);
-            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("select[name=zone_code]")));
-            var zoneSelect = new SelectElement(driver.FindElement(By.CssSelector("select[name=zone_code]")));
-
-            zoneSelect.SelectText(userInfo.zone);
-            emailInput.TypeText(userInfo.email);
-            phoneInput.TypeText(userInfo.phone);
-            newsletterCheckbox.SetCheckbox(userInfo.newsletter);
-            passwordInput.TypeText(userInfo.password);
-            confirmPasswordInput.TypeText(userInfo.confirmPassword);
-            CreateAccountButton.Click();
-        }
-
-        private void GoToUserCreationPage()
-        {
-            IWebElement newCustomerLink = driver.FindElement(By.CssSelector("form[name=login_form] a"));
-            newCustomerLink.Click();
-        }
-
-        private bool IsRegularPriceGrey(string color)
+        public bool IsRegularPriceGrey(string color)
         {
             return StyleHelper.IsGrey(color);
         }
 
-        private bool IsCampaignPriceRed(string color)
+        public bool IsCampaignPriceRed(string color)
         {
             return StyleHelper.IsRed(color);
-        }
-
-        private Duck GetInfoFromDetailsPage()
-        {
-            Duck result = new Duck();
-            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("h1")));
-
-            IWebElement regularPriceElement = driver.FindElement(By.XPath("//div[@class='information']//*[@class='price' or @class='regular-price']"));
-            IWebElement campaignPriceElement = driver.FindElement(By.CssSelector(".campaign-price"));
-
-            result.Name = driver.FindElement(By.CssSelector("h1.title")).Text;
-            result.RegularPrice = regularPriceElement.Text;
-            result.RegularPriceColor = regularPriceElement.GetCssValue("color");
-            result.RegularPriceSize = Convert.ToInt32(regularPriceElement.GetCssValue("font-size").Replace("px", ""));
-            result.IsRegularPriceCrossed = regularPriceElement.TagName == "s";
-
-            result.CampaignPriceColor = campaignPriceElement.GetCssValue("color");
-            result.CampaignPrice = campaignPriceElement.Text;
-            result.CampaignPriceSize = Convert.ToInt32(campaignPriceElement.GetCssValue("font-size").Replace("px", ""));
-            result.IsCampaignPriceBold = campaignPriceElement.TagName == "strong";
-
-            return result;
-        }
-
-        private Duck GetInfoFromMainPage(string listName, int index)
-        {
-            Duck result = new Duck();
-            string box = StringHelper.ConvertToLinkPart(listName);
-            By productSelector = By.CssSelector($"#box-{box}  li.product");
-            IWebElement productElement = driver.FindElement(productSelector);
-            IWebElement regularPriceElement = productElement.FindElement(By.XPath(".//*[@class='price' or @class='regular-price']"));
-            IWebElement campaignPriceElement = productElement.FindElement(By.CssSelector(".campaign-price"));
-
-            result.Name = productElement.FindElement(By.CssSelector(".name")).Text;
-            result.RegularPrice = regularPriceElement.Text;
-            result.RegularPriceColor = regularPriceElement.GetCssValue("color");
-            result.RegularPriceSize = Convert.ToDouble(regularPriceElement.GetCssValue("font-size").Replace("px", ""));
-            result.IsRegularPriceCrossed = regularPriceElement.TagName == "s";
-
-            result.CampaignPriceColor = campaignPriceElement.GetCssValue("color");
-            result.CampaignPrice = campaignPriceElement.Text;
-            result.CampaignPriceSize = Convert.ToDouble(campaignPriceElement.GetCssValue("font-size").Replace("px", ""));
-            result.IsCampaignPriceBold = campaignPriceElement.TagName == "strong";
-
-            return result;
-
-        }
-
-       
-
-        private void SelectProduct(string listName, int item)
-        {
-            string box = listName.ToLower().Replace(' ', '-');
-            By linkSelector = By.CssSelector($"#box-{box}  li.product:nth-child({item})>a.link");
-            IWebElement productLink = driver.FindElement(linkSelector);
-            productLink.Click();
-
-        }
-
-        private List<IWebElement> GetProductsFromSection(IWebElement section)
-        {
-            return section.FindElements(By.CssSelector("li.product")).ToList();
-        }
-
-        private string GetSectionName(IWebElement section)
-        {
-            return section.FindElement(By.CssSelector("h3")).Text;
-        }
-
-        private bool IsStickerExistFor(IWebElement product)
-        {
-            By StickerSelector = By.CssSelector("div.sticker");
-            return product.FindElements(StickerSelector).Count ==1;
-        }
-
-        private List<IWebElement> GetProducts()
-        {
-            return driver.FindElements(By.CssSelector("li.product")).ToList();
-        }
-
-        private string GetProductId(IWebElement product)
-        {
-            return product.FindElement(By.CssSelector(".name")).Text;
-        }
-
-        private List<IWebElement> GetSectionList()
-        {
-            return driver.FindElements(By.CssSelector(".middle>.content>.box")).ToList();
         }
     }
 }

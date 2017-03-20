@@ -1,8 +1,4 @@
-﻿
-
-using System;
-
-public class Customer
+﻿public class Customer
 {
     public string  taxId;
     public string company;
