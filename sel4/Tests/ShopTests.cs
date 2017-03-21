@@ -87,13 +87,10 @@ namespace Sel4
         }
 
         [Test]
-        [Ignore("not completed")]
+       
         public void VerifyCart()
         {
-            /*
-             
-            6) удалить все товары из корзины один за другим, после каждого удаления подождать, пока внизу обновится таблица
-            */
+            
             var Shop = GoToShopPage(driver);
             //add products to cart
             for (var i = 1; i <= 3; i++)
@@ -106,10 +103,18 @@ namespace Sel4
                 wait.Until(ExpectedConditions.TextToBePresentInElement(QuantityElement, i.ToString()));
                 Shop = GoToShopPage(driver);
             }
-            Shop.GoToCart();
-
-            var a = 1;
-
+            
+            var Cart = Shop.GoToCart();
+            int ProductCount = Cart.GetProductsCount();
+            if (ProductCount > 1)
+            { Cart.SelectFirstShortcut(); } //stop crazy carusel
+            while (Cart.IsAnyProductExist())
+            {
+                Cart.DeleteFirstProduct();
+                ProductCount--;
+            }
+            wait.Until(ExpectedConditions.TextToBePresentInElementLocated(By.CssSelector("em"), "There are no items in your cart."));
+            Assert.IsTrue(Cart.AreElementsPresent(By.XPath("//em[.='There are no items in your cart.']")));
         }
 
         private void ReturnToMainPage()

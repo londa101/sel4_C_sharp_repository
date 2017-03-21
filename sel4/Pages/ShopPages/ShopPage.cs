@@ -13,10 +13,28 @@ namespace sel4.Pages
     : base(driver)
         { }
 
-        public void GoToCart()
+        public ProductDetailsPage SelectProduct(string listName, int item)
+        {
+            string box = listName.ToLower().Replace(' ', '-');
+            By linkSelector = By.CssSelector($"#box-{box}  li.product:nth-child({item})>a.link");
+            IWebElement productLink = driver.FindElement(linkSelector);
+            productLink.Click();
+            return new ProductDetailsPage(driver);
+
+        }
+
+        public CustomerPage GoToUserCreationPage()
+        {
+            IWebElement newCustomerLink = driver.FindElement(By.CssSelector("form[name=login_form] a"));
+            newCustomerLink.Click();
+            return new CustomerPage(driver);
+        }
+
+        public CartPage GoToCart()
         {
             var checkoutLink = driver.FindElement(By.CssSelector("a.link[href$='checkout']"));
             checkoutLink.Click();
+            return new CartPage(driver);
         }
 
         
@@ -46,15 +64,6 @@ namespace sel4.Pages
             customerPage.FillFieldsAndSave(userInfo);
         }
 
-      
-
-        public CustomerPage GoToUserCreationPage()
-        {
-            IWebElement newCustomerLink = driver.FindElement(By.CssSelector("form[name=login_form] a"));
-            newCustomerLink.Click();
-            return new CustomerPage(driver);
-        }
-
 
         public Duck GetInfo(string listName, int index)
         {
@@ -80,15 +89,6 @@ namespace sel4.Pages
 
         }
 
-        public ProductDetailsPage SelectProduct(string listName, int item)
-        {
-            string box = listName.ToLower().Replace(' ', '-');
-            By linkSelector = By.CssSelector($"#box-{box}  li.product:nth-child({item})>a.link");
-            IWebElement productLink = driver.FindElement(linkSelector);
-            productLink.Click();
-            return new ProductDetailsPage(driver);
-
-        }
 
         public List<IWebElement> GetProductsFromSection(IWebElement section)
         {
