@@ -1,5 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System.Collections.Generic;
+using System;
+using OpenQA.Selenium.Support.UI;
 
 namespace sel4.Pages
 {
@@ -52,5 +54,14 @@ namespace sel4.Pages
             return zoneElemenent.Text;
         }
 
+        public CountryPage AddNewCountry()
+        {
+            By addNewCountryLocator = By.CssSelector("a.button[href*=edit_country]");
+            wait.Until(ExpectedConditions.ElementIsVisible(addNewCountryLocator));
+            var button = driver.FindElement(addNewCountryLocator);
+            button.Click();
+            return new CountryPage(driver);
+
+        }
     }
 }

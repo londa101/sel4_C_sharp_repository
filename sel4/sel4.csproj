@@ -70,6 +70,7 @@
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\StyleHelper.cs" />
     <Compile Include="Pages\AdminPages\AdminCatalogPage.cs" />
+    <Compile Include="Pages\AdminPages\CountryPage.cs" />
     <Compile Include="Pages\AdminPages\AdminProductPage.cs" />
     <Compile Include="Pages\AdminPages\AdminGeoZonesPage.cs" />
     <Compile Include="Pages\AdminPages\AdminCountriesPage.cs" />
