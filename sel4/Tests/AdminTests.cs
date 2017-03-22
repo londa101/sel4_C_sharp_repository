@@ -6,6 +6,7 @@ using sel4.Helpers;
 using sel4.Pages;
 using System;
 using System.Linq;
+using OpenQA.Selenium.Support.UI;
 
 namespace Sel4
 {
@@ -158,26 +159,15 @@ namespace Sel4
         }
 
         [Test]
-        [Ignore("Not complleted yet")]
         public void VerifyNewWindows()
         {
-            /*
-             * 1) зайти в админку
-               2) открыть пункт меню Countries (или страницу http://localhost/litecart/admin/?app=countries&doc=countries)
-               3) открыть на редактирование какую-нибудь страну или начать создание новой
-               4) возле некоторых полей есть ссылки с иконкой в виде квадратика со стрелкой -- они ведут на внешние страницы и открываются 
-                   в новом окне, именно это и нужно проверить.
-
-Конечно, можно просто убедиться в том, что у ссылки есть атрибут target="_blank". Но в этом упражнении требуется именно 
-кликнуть по ссылке, чтобы она открылась в новом окне, потом переключиться в новое окно, закрыть его, вернуться обратно,
-и повторить эти действия для всех таких ссылок.
-             */
+            
             var LoginPage = GoToLoginAdminPage(driver);
             var Home = LoginPage.CorrectLogin("admin", "admin");
             Home.SelectMenuItemByText("Countries");
             var AdminCountries = new AdminCountriesPage(driver);
             var newCountry = AdminCountries.AddNewCountry();
-            var ExternalLinks = driver.FindElements(By.CssSelector("[class='fa fa-external-link']"));
+            var ExternalLinks = driver.FindElements(By.CssSelector("form [target='_blank']"));
 
             string mainWindow = driver.CurrentWindowHandle;
             ICollection<string> oldWindows = driver.WindowHandles;
@@ -188,20 +178,12 @@ namespace Sel4
                 ICollection<string> newWindows = driver.WindowHandles;
                 List<string> newWindowList = newWindows.ToList<string>();
                 newWindowList.Remove(mainWindow); 
-                string newWindow = newWindowList[0];  //= wait.Until(ThereIsWindowOtherThan(oldWindows));
+                string newWindow = newWindowList[0];  
                 driver.SwitchTo().Window(newWindow);
-                // ...
+                wait.Until(ExpectedConditions.ElementExists(By.CssSelector("body")));
                 driver.Close();
                 driver.SwitchTo().Window(mainWindow);
-
-            }
-            var Countries = AdminCountries.GetCountriesList();
-            Assert.That(Countries, Is.Ordered);
-        }
-
-        private Func<IWebDriver, string> ThereIsWindowOtherThan(ICollection<string> oldWindows)
-        {
-            throw new NotImplementedException();
+            }    
         }
     }
 }
