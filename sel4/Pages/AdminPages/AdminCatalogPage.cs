@@ -1,5 +1,8 @@
-﻿using OpenQA.Selenium;
+﻿using System;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace sel4.Pages
 {
@@ -35,6 +38,23 @@ namespace sel4.Pages
             return new AdminProductPage(driver);
         }
 
+        public List<string> GetProductList()
+        {
+            var ListLocator = By.CssSelector(".dataTable a[href*='product']:not([title])");
+            return driver.FindElements(ListLocator).Select(element => element.Text).ToList();
+        }
 
+        internal void SelectCategory(string category)
+        {
+            var categoryElement = driver.FindElement(By.XPath($"//a[.='{category}']"));
+            categoryElement.Click();
+        }
+
+        internal AdminProductPage SelectProduct(string product)
+        {
+            var productElement = driver.FindElement(By.XPath($"//a[.='{product}']"));
+            productElement.Click();
+            return new AdminProductPage(driver);
+        }
     }
 }

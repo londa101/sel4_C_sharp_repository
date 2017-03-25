@@ -8,6 +8,7 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Edge;
 using sel4.Helpers;
 using sel4.Pages;
+using OpenQA.Selenium.Remote;
 
 namespace Sel4
 {
@@ -24,8 +25,12 @@ namespace Sel4
         {
             switch (bowserToStart)
             {
+
                 case "C":
-                    driver = new ChromeDriver();
+                    ChromeOptions cr_options = new ChromeOptions();
+                    cr_options.SetLoggingPreference(LogType.Browser, LogLevel.All);
+                    //cr_options.SetLoggingPreference(LogType.Driver, LogLevel.All);
+                    driver = new ChromeDriver(cr_options);
                     break;
                 case "F":
                     driver = new FirefoxDriver();

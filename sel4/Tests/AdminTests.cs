@@ -185,5 +185,43 @@ namespace Sel4
                 driver.SwitchTo().Window(mainWindow);
             }    
         }
+
+        [Test]
+        public void VerifyBrowserLogs()
+        {
+            var Login = GoToLoginAdminPage(driver);
+            var Home = Login.CorrectLogin("admin", "admin");
+            Home.SelectMenuItemByText("Catalog");
+            var Catalog = new AdminCatalogPage(driver);
+            Catalog.SelectCategory("Rubber Ducks");
+            var ProductList = Catalog.GetProductList();
+            foreach (var product in ProductList)
+            {
+                var productPage =  Catalog.SelectProduct(product);
+                Console.WriteLine(product);
+                foreach (LogEntry l in driver.Manage().Logs.GetLog("browser"))
+                {
+                    Console.WriteLine(l);
+                }
+                productPage.driver.Navigate().Back();
+                Catalog = new AdminCatalogPage(driver);
+            }
+        }
+
+        [Test]
+        public void VerifyBrowserLogs_1()
+        {
+            driver.Url = "http://www.inmotionhosting.com/support/website/javascript/diagnose-javascript-errors";
+            var Login = GoToLoginAdminPage(driver);
+            var Home = Login.CorrectLogin("admin", "admin");
+            Home.SelectMenuItemByText("Catalog");
+            driver.Url = "http://www.htmlgoodies.com/beyond/javascript/article.php/3776371";
+
+            foreach (LogEntry l in driver.Manage().Logs.GetLog("browser"))
+            {
+                Console.WriteLine(l);
+            }
+        }
+
+        }
     }
-}
