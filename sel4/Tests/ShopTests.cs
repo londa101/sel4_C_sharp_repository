@@ -2,8 +2,6 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using System.Collections.Generic;
-using System.Linq;
 using System;
 using sel4.Helpers;
 
@@ -99,8 +97,7 @@ namespace Sel4
                 if (detailPage.IsSizeControlExist())
                     detailPage.SelectSize("Small");
                 detailPage.AddToCart();
-                var QuantityElement = driver.FindElement(By.CssSelector(".quantity"));
-                wait.Until(ExpectedConditions.TextToBePresentInElement(QuantityElement, i.ToString()));
+                wait.Until(ExpectedConditions.TextToBePresentInElement(detailPage.QuantityElement, i.ToString()));
                 Shop = GoToShopPage(driver);
             }
             

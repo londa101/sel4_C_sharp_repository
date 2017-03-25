@@ -1,6 +1,5 @@
 ﻿using OpenQA.Selenium;
 using System.Collections.Generic;
-using System;
 using OpenQA.Selenium.Support.UI;
 
 namespace sel4.Pages

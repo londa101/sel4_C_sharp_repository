@@ -6,9 +6,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Edge;
-using sel4.Helpers;
 using sel4.Pages;
-using OpenQA.Selenium.Remote;
 
 namespace Sel4
 {

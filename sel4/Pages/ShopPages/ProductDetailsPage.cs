@@ -1,6 +1,7 @@
 ﻿using System;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Support.PageObjects;
 
 namespace sel4.Pages
 {
@@ -10,15 +11,26 @@ namespace sel4.Pages
         
 
         public ProductDetailsPage(IWebDriver driver) : base(driver)
-        { }
+        {
+            PageFactory.InitElements(driver, this);
+        }
+
+        [FindsBy(How = How.XPath, Using = "//div[@class='information']//*[@class='price' or @class='regular-price']")]
+        IWebElement regularPriceElement;
+
+        [FindsBy(How = How.CssSelector, Using = ".campaign-price")]
+        IWebElement campaignPriceElement;
+
+        [FindsBy(How = How.CssSelector, Using = "button[name='add_cart_product']")]
+        IWebElement AddButton;
+
+        [FindsBy(How = How.CssSelector, Using = ".quantity")]
+        public IWebElement QuantityElement;
 
         public Duck GetInfo()
         {
             Duck result = new Duck();
             wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("h1")));
-
-            IWebElement regularPriceElement = driver.FindElement(By.XPath("//div[@class='information']//*[@class='price' or @class='regular-price']"));
-            IWebElement campaignPriceElement = driver.FindElement(By.CssSelector(".campaign-price"));
 
             result.Name = driver.FindElement(By.CssSelector("h1.title")).Text;
             result.RegularPrice = regularPriceElement.Text;
@@ -50,8 +62,6 @@ namespace sel4.Pages
         public void AddToCart()
         {
             wait.Until(ExpectedConditions.ElementExists(By.CssSelector("button[name='add_cart_product']")));
-
-            var AddButton = driver.FindElement(By.CssSelector("button[name='add_cart_product']"));
             AddButton.Click();
         }
 

@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Support.PageObjects;
 using System.Collections.Generic;
 using sel4.Helpers;
 using System;
@@ -11,7 +12,13 @@ namespace sel4.Pages
     {
         public ShopPage(IWebDriver driver)
     : base(driver)
-        { }
+        {
+            PageFactory.InitElements(driver, this);
+        }
+
+
+        [FindsBy(How = How.CssSelector, Using = "form[name=login_form] a")]
+        IWebElement newCustomerLink;
 
         public ProductDetailsPage SelectProduct(string listName, int item)
         {
@@ -25,7 +32,7 @@ namespace sel4.Pages
 
         public CustomerPage GoToUserCreationPage()
         {
-            IWebElement newCustomerLink = driver.FindElement(By.CssSelector("form[name=login_form] a"));
+           // IWebElement newCustomerLink = driver.FindElement(By.CssSelector("form[name=login_form] a"));
             newCustomerLink.Click();
             return new CustomerPage(driver);
         }
